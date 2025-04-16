@@ -2,15 +2,38 @@ package main
 
 import (
 	"shortener"
+	"shortener/configs"
 	"shortener/internal/handler"
+	"shortener/internal/repository"
+	"shortener/internal/service"
 
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func main() {
-	handler := handler.NewHandler()
+	logrus.SetFormatter(new(logrus.JSONFormatter))
+
+	if err := configs.InitConfig(); err != nil {
+		logrus.Fatalf("error initialization configs: %s", err.Error())
+	}
+
+	config, err := configs.LoadConfig()
+	if err != nil {
+		logrus.Fatalf("error loading env variables: %s", err.Error())
+	}
+
+	db, err := repository.NewPostgresDB(config)
+	if err != nil {
+		logrus.Fatalf("failed to initialization db: %s", err.Error())
+	}
+
+	repository := repository.NewRepository(db.DB)
+	service := service.NewService(repository, config)
+	handler := handler.NewHandler(service)
+
 	srv := new(shortener.Server)
-	if err := srv.Run("8888", handler.InitRouts()); err != nil {
+	if err := srv.Run(viper.GetString("port"), handler.InitRouts()); err != nil {
 		logrus.Fatalf("error occurred while running http server: %s", err.Error())
 	}
 	logrus.Println("Application Started...")

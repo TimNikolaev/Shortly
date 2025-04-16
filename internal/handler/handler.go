@@ -1,12 +1,17 @@
 package handler
 
-import "github.com/gin-gonic/gin"
+import (
+	"shortener/internal/service"
+
+	"github.com/gin-gonic/gin"
+)
 
 type Handler struct {
+	*service.Service
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(service *service.Service) *Handler {
+	return &Handler{Service: service}
 }
 
 func (h *Handler) InitRouts() *gin.Engine {

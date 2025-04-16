@@ -1,19 +1,42 @@
 package configs
 
+import (
+	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
+)
+
 type Config struct {
 	DBConfig
 	AuthConfig
 }
 
 type DBConfig struct {
-	Host     string
-	User     string
-	Password string
-	DBName   string
-	Port     string
-	SSLMode  string
+	DSN string
 }
 
 type AuthConfig struct {
 	Secret string
+}
+
+func LoadConfig() (*Config, error) {
+	err := godotenv.Load()
+	if err != nil {
+		return nil, err
+	}
+	return &Config{
+		DBConfig: DBConfig{
+			DSN: os.Getenv("DSN"),
+		},
+		AuthConfig: AuthConfig{
+			Secret: os.Getenv("SECRET"),
+		},
+	}, nil
+}
+
+func InitConfig() error {
+	viper.AddConfigPath("configs")
+	viper.SetConfigName("config")
+	return viper.ReadInConfig()
 }
