@@ -14,22 +14,22 @@ func NewLinkPostgres(db *gorm.DB) *LinkPostgres {
 	return &LinkPostgres{db: db}
 }
 
-func (s *LinkPostgres) Create(link shortener.Link) (shortener.Link, error) {
+func (r *LinkPostgres) Create(link shortener.Link) (shortener.Link, error) {
 	return shortener.Link{}, nil
 }
 
-func (s *LinkPostgres) GetByHash(hash string) (shortener.Link, error) {
+func (r *LinkPostgres) GetByHash(hash string) (shortener.Link, error) {
 	return shortener.Link{}, nil
 }
 
-func (s *LinkPostgres) GetByID(id uint) (shortener.Link, error) {
+func (r *LinkPostgres) GetByID(id uint) (shortener.Link, error) {
 	return shortener.Link{}, nil
 }
 
-func (s *LinkPostgres) Update(link shortener.Link) (shortener.Link, error) {
+func (r *LinkPostgres) Update(link shortener.Link) (shortener.Link, error) {
 	return shortener.Link{}, nil
 }
 
-func (s *LinkPostgres) Delete(id uint) error {
+func (r *LinkPostgres) Delete(id uint) error {
 	return nil
 }
