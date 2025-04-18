@@ -4,12 +4,12 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Name     string `json:"name"`
-	Email    string `json:"email" gorm:"index"`
-	Password string `json:"password"`
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required" gorm:"column:password_hash"`
 }
 
 type UserRepository interface {
-	CreateUser(user User) (int, error)
-	GetUser(email, password string) (User, error)
+	CreateUser(user *User) (uint, error)
+	GetUser(email, password string) (*User, error)
 }

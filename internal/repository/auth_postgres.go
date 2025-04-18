@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"shortener"
 
 	"gorm.io/gorm"
@@ -14,10 +15,29 @@ func NewUserPostgres(db *gorm.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-func (s *UserPostgres) CreateUser(user shortener.User) (int, error) {
-	return 0, nil
+func (r *UserPostgres) CreateUser(user *shortener.User) (uint, error) {
+	result := r.db.Create(user)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return user.ID, nil
+
 }
 
-func (s *UserPostgres) GetUser(email, password string) (shortener.User, error) {
-	return shortener.User{}, nil
+func (r *UserPostgres) GetUser(email, password_hash string) (*shortener.User, error) {
+	var user shortener.User
+
+	result := r.db.First(&user, "email = ?", email)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if !checkPasswordHash(password_hash, user.Password) {
+		return nil, errors.New("error wrong password")
+	}
+
+	return &user, nil
+}
+
+func checkPasswordHash(password_hash, userPassword_hash string) bool {
+	return userPassword_hash == password_hash
 }

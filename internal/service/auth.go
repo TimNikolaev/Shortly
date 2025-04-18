@@ -1,11 +1,34 @@
 package service
 
-import "shortener"
+import (
+	"crypto/sha1"
+	"fmt"
+	"shortener"
+	"shortener/pkg/jwt"
+)
 
-func (s *Service) CreateUser(user shortener.User) (int, error) {
-	return 0, nil
+const salt = "qwerty123456789"
+
+func (s *Service) CreateUser(user *shortener.User) (uint, error) {
+	user.Password = generatePasswordHash(user.Password)
+	return s.UserRepository.CreateUser(user)
 }
 
-func (s *Service) GetUser(email, password string) (shortener.User, error) {
-	return shortener.User{}, nil
+func (s *Service) GenerateToken(email, password string) (string, error) {
+	user, err := s.UserRepository.GetUser(email, generatePasswordHash(password))
+	if err != nil {
+		return "", err
+	}
+
+	return jwt.NewJWT(s.Config.AuthConfig.Secret).Generate(user.ID)
+}
+
+func (s *Service) ParseToken(accessToken string) (int, error) {
+	return jwt.NewJWT(s.Config.AuthConfig.Secret).Parse(accessToken)
+}
+
+func generatePasswordHash(password string) string {
+	hash := sha1.New()
+	hash.Write([]byte(password))
+	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }
