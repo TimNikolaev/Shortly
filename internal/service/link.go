@@ -2,8 +2,15 @@ package service
 
 import "shortener"
 
-func (s *Service) Create(link shortener.Link) (shortener.Link, error) {
-	return shortener.Link{}, nil
+func (s *Service) CreateLink(userID int, url string) (*shortener.Link, error) {
+	link := shortener.NewLink(url)
+
+	createdLink, err := s.LinkRepository.Create(link)
+	if err != nil {
+		return nil, err
+	}
+
+	return createdLink, nil
 }
 
 func (s *Service) GetByHash(hash string) (shortener.Link, error) {

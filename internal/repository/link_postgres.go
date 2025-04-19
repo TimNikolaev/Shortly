@@ -14,8 +14,12 @@ func NewLinkPostgres(db *gorm.DB) *LinkPostgres {
 	return &LinkPostgres{db: db}
 }
 
-func (r *LinkPostgres) Create(link shortener.Link) (shortener.Link, error) {
-	return shortener.Link{}, nil
+func (r *LinkPostgres) Create(link *shortener.Link) (*shortener.Link, error) {
+	result := r.db.Create(link)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return link, nil
 }
 
 func (r *LinkPostgres) GetByHash(hash string) (shortener.Link, error) {
