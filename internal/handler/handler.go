@@ -26,7 +26,7 @@ func (h *Handler) InitRouts() *gin.Engine {
 		link := api.Group("/link")
 		{
 			link.POST("/", h.createLink)
-			link.GET("/:id", h.getLink)
+			link.GET("/:id", h.goToLink)
 			link.GET("/", h.getAllLinks)
 			link.PUT("/:id", h.updateLink)
 			link.DELETE("/:id", h.deleteLink)

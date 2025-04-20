@@ -1,5 +1,6 @@
-DROP TABLE users;
+DROP TABLE stats;
 
 DROP TABLE links;
 
-DROP TABLE stats;
+DROP TABLE users;
+

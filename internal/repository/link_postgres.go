@@ -22,18 +22,39 @@ func (r *LinkPostgres) Create(link *shortener.Link) (*shortener.Link, error) {
 	return link, nil
 }
 
-func (r *LinkPostgres) GetByHash(hash string) (shortener.Link, error) {
-	return shortener.Link{}, nil
+func (r *LinkPostgres) GetByHash(hash string) (*shortener.Link, error) {
+	var link shortener.Link
+
+	result := r.db.First(&link, "hash = ?", hash)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &link, nil
 }
 
-func (r *LinkPostgres) GetByID(id uint) (shortener.Link, error) {
-	return shortener.Link{}, nil
+func (r *LinkPostgres) GetByID(id uint) (*shortener.Link, error) {
+	var link shortener.Link
+
+	result := r.db.First(&link, id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &link, nil
 }
 
 func (r *LinkPostgres) Update(link shortener.Link) (shortener.Link, error) {
 	return shortener.Link{}, nil
 }
 
-func (r *LinkPostgres) Delete(id uint) error {
+func (r *LinkPostgres) Delete(userID, linkID uint) error {
+	result := r.db.Where("id = ? AND user_id = ?", linkID, userID).Delete(&shortener.Link{})
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
 	return nil
 }

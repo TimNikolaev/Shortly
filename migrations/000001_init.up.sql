@@ -15,6 +15,7 @@ CREATE TABLE links
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
   deleted_at TIMESTAMP,
+  user_id int references users (id) ON UPDATE CASCADE ON DELETE SET NULL,
   url varchar(255) not null,
   hash varchar(255) not null
 );

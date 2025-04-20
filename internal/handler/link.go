@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +30,7 @@ func (h *Handler) createLink(c *gin.Context) {
 
 }
 
-func (h *Handler) getLink(c *gin.Context) {
+func (h *Handler) goToLink(c *gin.Context) {
 
 }
 
@@ -42,5 +43,22 @@ func (h *Handler) updateLink(c *gin.Context) {
 }
 
 func (h *Handler) deleteLink(c *gin.Context) {
+	userID, err := getUserID(c)
+	if err != nil {
+		return
+	}
 
+	linkID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	err = h.service.DeleteLink(uint(userID), uint(linkID))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{Status: "ok"})
 }

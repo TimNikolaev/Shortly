@@ -10,32 +10,34 @@ import (
 
 type LinkRepository interface {
 	Create(link *Link) (*Link, error)
-	GetByHash(hash string) (Link, error)
-	GetByID(id uint) (Link, error)
+	GetByHash(hash string) (*Link, error)
+	GetByID(id uint) (*Link, error)
 	Update(link Link) (Link, error)
-	Delete(id uint) error
+	Delete(userID, linkID uint) error
 }
 
 type Link struct {
 	gorm.Model
-	URL   string `json:"url"`
-	Hash  string `json:"hash" gorm:"uniqueIndex"`
-	Stats []Stat `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	UserID uint   `json:"link_id" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	URL    string `json:"url"`
+	Hash   string `json:"hash" gorm:"uniqueIndex"`
+	Stats  []Stat `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
-func NewLink(url string) *Link {
+func NewLink(id uint, url string) *Link {
 	link := &Link{
-		URL: url,
+		UserID: id,
+		URL:    url,
 	}
 	link.GenerateHash(url)
 	return link
 }
 
 func (link *Link) GenerateHash(url string) {
-	link.Hash = RandStringRunes(6, url)
+	link.Hash = Hashing(6, url)
 }
 
-func RandStringRunes(n int, url string) string {
+func Hashing(n int, url string) string {
 	hasher := sha1.New()
 	hasher.Write([]byte(url))
 	hashBytes := hasher.Sum(nil)
@@ -45,7 +47,7 @@ func RandStringRunes(n int, url string) string {
 	hashStr = strings.TrimRight(hashStr, "=")
 	hashStr = strings.ReplaceAll(hashStr, "/", "_")
 
-	shortHash := hashStr[:n+1]
+	shortHash := hashStr[:n]
 
 	return shortHash
 }

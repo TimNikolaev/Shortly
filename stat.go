@@ -9,7 +9,7 @@ import (
 
 type Stat struct {
 	gorm.Model
-	LinkId uint           `json:"link_id" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	LinkID uint           `json:"link_id" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Clicks int            `json:"clicks"`
 	Date   datatypes.Date `json:"date"`
 }
