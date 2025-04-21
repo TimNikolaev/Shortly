@@ -35,7 +35,29 @@ func (h *Handler) goToLink(c *gin.Context) {
 }
 
 func (h *Handler) getAllLinks(c *gin.Context) {
+	userID, err := getUserID(c)
+	if err != nil {
+		return
+	}
 
+	limit, err := strconv.Atoi(c.Query("limit"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	offset, err := strconv.Atoi(c.Query("offset"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	links, count, err := h.service.GetAllLinks(userID, limit, offset)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getAllLinksResponse{Links: links, Count: count})
 }
 
 func (h *Handler) updateLink(c *gin.Context) {
@@ -54,7 +76,7 @@ func (h *Handler) deleteLink(c *gin.Context) {
 		return
 	}
 
-	err = h.service.DeleteLink(uint(userID), uint(linkID))
+	err = h.service.DeleteLink(userID, linkID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

@@ -19,6 +19,7 @@ func (r *LinkPostgres) Create(link *shortener.Link) (*shortener.Link, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
+
 	return link, nil
 }
 
@@ -29,6 +30,7 @@ func (r *LinkPostgres) GetByHash(hash string) (*shortener.Link, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
+
 	return &link, nil
 }
 
@@ -39,7 +41,38 @@ func (r *LinkPostgres) GetByID(id uint) (*shortener.Link, error) {
 	if result.Error != nil {
 		return nil, result.Error
 	}
+
 	return &link, nil
+}
+
+func (r *LinkPostgres) GetAll(userID uint, limit, offset int) ([]shortener.Link, error) {
+	var links []shortener.Link
+
+	result := r.db.Table("links").
+		Where("deleted_at is null AND user_id = ?", userID).
+		Session(&gorm.Session{}).
+		Order("id").
+		Limit(limit).
+		Offset(offset).
+		Scan(&links)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return links, nil
+}
+
+func (r *LinkPostgres) Count(userID uint) (int64, error) {
+	var count int64
+
+	result := r.db.Table("links").
+		Where("deleted_at is null AND user_id = ?", userID).
+		Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return count, nil
 }
 
 func (r *LinkPostgres) Update(link shortener.Link) (shortener.Link, error) {
@@ -50,10 +83,6 @@ func (r *LinkPostgres) Delete(userID, linkID uint) error {
 	result := r.db.Where("id = ? AND user_id = ?", linkID, userID).Delete(&shortener.Link{})
 	if result.Error != nil {
 		return result.Error
-	}
-
-	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
 	}
 
 	return nil

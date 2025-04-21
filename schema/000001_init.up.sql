@@ -1,9 +1,9 @@
 CREATE TABLE users
 (
   id serial not null unique,
-  created_at TIMESTAMP,
-  updated_at TIMESTAMP,
-  deleted_at TIMESTAMP,
+  created_at TIMESTAMP default null,
+  updated_at TIMESTAMP default null,
+  deleted_at TIMESTAMP default null,
   name varchar(255) not null,
   email varchar(255) not null unique,
   password_hash varchar(255) not null
@@ -12,9 +12,9 @@ CREATE TABLE users
 CREATE TABLE links
 (
   id serial not null unique,
-  created_at TIMESTAMP,
-  updated_at TIMESTAMP,
-  deleted_at TIMESTAMP,
+  created_at TIMESTAMP default null,
+  updated_at TIMESTAMP default null,
+  deleted_at TIMESTAMP default null,
   user_id int references users (id) ON UPDATE CASCADE ON DELETE SET NULL,
   url varchar(255) not null,
   hash varchar(255) not null

@@ -12,6 +12,8 @@ type LinkRepository interface {
 	Create(link *Link) (*Link, error)
 	GetByHash(hash string) (*Link, error)
 	GetByID(id uint) (*Link, error)
+	GetAll(userID uint, limit, offset int) ([]Link, error)
+	Count(userID uint) (int64, error)
 	Update(link Link) (Link, error)
 	Delete(userID, linkID uint) error
 }
