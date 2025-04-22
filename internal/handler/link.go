@@ -27,7 +27,6 @@ func (h *Handler) createLink(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]any{"hash": link.Hash})
-
 }
 
 func (h *Handler) goToLink(c *gin.Context) {
@@ -69,7 +68,30 @@ func (h *Handler) getAllLinks(c *gin.Context) {
 }
 
 func (h *Handler) updateLink(c *gin.Context) {
+	userID, err := getUserID(c)
+	if err != nil {
+		return
+	}
 
+	linkID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	var input LinkUpdateRequest
+
+	if err = c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	}
+
+	link, err := h.service.UpdateLink(uint(userID), uint(linkID), input.URL, input.Hash)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]any{"link": link})
 }
 
 func (h *Handler) deleteLink(c *gin.Context) {
@@ -84,7 +106,7 @@ func (h *Handler) deleteLink(c *gin.Context) {
 		return
 	}
 
-	err = h.service.DeleteLink(userID, linkID)
+	err = h.service.DeleteLink(uint(userID), uint(linkID))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

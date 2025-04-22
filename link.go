@@ -12,7 +12,7 @@ type LinkRepository interface {
 	GetByID(id uint) (*Link, error)
 	GetAll(userID uint, limit, offset int) ([]Link, error)
 	Count(userID uint) (int64, error)
-	Update(link Link) (Link, error)
+	Update(link *Link, userID uint) (*Link, error)
 	Delete(userID, linkID uint) error
 }
 

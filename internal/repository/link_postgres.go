@@ -1,9 +1,11 @@
 package repository
 
 import (
+	"fmt"
 	"shortener"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type LinkPostgres struct {
@@ -75,14 +77,27 @@ func (r *LinkPostgres) Count(userID uint) (int64, error) {
 	return count, nil
 }
 
-func (r *LinkPostgres) Update(link shortener.Link) (shortener.Link, error) {
-	return shortener.Link{}, nil
+func (r *LinkPostgres) Update(link *shortener.Link, userID uint) (*shortener.Link, error) {
+	result := r.db.Model(&shortener.Link{}).Where("id = ? AND user_id = ?", link.ID, userID).Clauses(clause.Returning{}).Updates(link)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, fmt.Errorf("link not found or access denied")
+	}
+
+	return link, nil
 }
 
 func (r *LinkPostgres) Delete(userID, linkID uint) error {
 	result := r.db.Where("id = ? AND user_id = ?", linkID, userID).Delete(&shortener.Link{})
 	if result.Error != nil {
 		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("link not found or access denied")
 	}
 
 	return nil

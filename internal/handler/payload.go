@@ -15,3 +15,8 @@ type getAllLinksResponse struct {
 	Links []shortener.Link `json:"links"`
 	Count int64            `json:"count"`
 }
+
+type LinkUpdateRequest struct {
+	URL  string `json:"url" validate:"required,url"`
+	Hash string `json:"hash"`
+}

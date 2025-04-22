@@ -1,6 +1,10 @@
 package service
 
-import "shortener"
+import (
+	"shortener"
+
+	"gorm.io/gorm"
+)
 
 func (s *Service) CreateLink(userID int, url string) (*shortener.Link, error) {
 	link := shortener.NewLink(uint(userID), url)
@@ -31,14 +35,18 @@ func (s *Service) GetAllLinks(userID, limit, offset int) ([]shortener.Link, int6
 	return links, count, nil
 }
 
-func (s *Service) Update(link shortener.Link) (shortener.Link, error) {
-	return shortener.Link{}, nil
+func (s *Service) UpdateLink(userID, linkID uint, url, hash string) (*shortener.Link, error) {
+	return s.LinkRepository.Update(&shortener.Link{
+		Model: gorm.Model{ID: linkID},
+		URL:   url,
+		Hash:  hash,
+	}, userID)
 }
 
-func (s *Service) DeleteLink(userID, linkID int) error {
-	if _, err := s.LinkRepository.GetByID(uint(linkID)); err != nil {
+func (s *Service) DeleteLink(userID, linkID uint) error {
+	if _, err := s.LinkRepository.GetByID(linkID); err != nil {
 		return err
 	}
 
-	return s.LinkRepository.Delete(uint(userID), uint(linkID))
+	return s.LinkRepository.Delete(userID, linkID)
 }
