@@ -13,8 +13,8 @@ func (s *Service) CreateLink(userID int, url string) (*shortener.Link, error) {
 	return createdLink, nil
 }
 
-func (s *Service) GoToLink(hash string) (shortener.Link, error) {
-	return shortener.Link{}, nil
+func (s *Service) GoToLink(hash string) (*shortener.Link, error) {
+	return s.LinkRepository.GetByHash(hash)
 }
 
 func (s *Service) GetAllLinks(userID, limit, offset int) ([]shortener.Link, int64, error) {

@@ -1,9 +1,7 @@
 package shortener
 
 import (
-	"crypto/sha1"
-	"encoding/base64"
-	"strings"
+	"math/rand"
 
 	"gorm.io/gorm"
 )
@@ -31,25 +29,20 @@ func NewLink(id uint, url string) *Link {
 		UserID: id,
 		URL:    url,
 	}
-	link.GenerateHash(url)
+	link.GenerateHash()
 	return link
 }
 
-func (link *Link) GenerateHash(url string) {
-	link.Hash = Hashing(6, url)
+func (link *Link) GenerateHash() {
+	link.Hash = generateRandomKey(6)
 }
 
-func Hashing(n int, url string) string {
-	hasher := sha1.New()
-	hasher.Write([]byte(url))
-	hashBytes := hasher.Sum(nil)
+const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-	hashStr := base64.URLEncoding.EncodeToString(hashBytes)
-
-	hashStr = strings.TrimRight(hashStr, "=")
-	hashStr = strings.ReplaceAll(hashStr, "/", "_")
-
-	shortHash := hashStr[:n]
-
-	return shortHash
+func generateRandomKey(length int) string {
+	key := make([]byte, length)
+	for i := range key {
+		key[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(key)
 }

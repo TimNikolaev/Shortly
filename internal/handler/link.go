@@ -31,7 +31,15 @@ func (h *Handler) createLink(c *gin.Context) {
 }
 
 func (h *Handler) goToLink(c *gin.Context) {
+	hashLink := c.Param("hash")
 
+	link, err := h.service.GoToLink(hashLink)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Redirect(http.StatusTemporaryRedirect, link.URL)
 }
 
 func (h *Handler) getAllLinks(c *gin.Context) {
