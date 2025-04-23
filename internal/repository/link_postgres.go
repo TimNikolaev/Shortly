@@ -28,7 +28,7 @@ func (r *LinkPostgres) Create(link *shortener.Link) (*shortener.Link, error) {
 func (r *LinkPostgres) GetByHash(hash string) (*shortener.Link, error) {
 	var link shortener.Link
 
-	result := r.db.First(&link, "hash = ?", hash)
+	result := r.db.Where("hash = ?", hash).First(&link)
 	if result.Error != nil {
 		return nil, result.Error
 	}

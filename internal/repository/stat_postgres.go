@@ -1,9 +1,11 @@
 package repository
 
 import (
+	"fmt"
 	"shortener"
 	"time"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -15,10 +17,75 @@ func NewStatPostgres(db *gorm.DB) *StatPostgres {
 	return &StatPostgres{db: db}
 }
 
-func (r *StatPostgres) AddClick(linkId uint) {
-
+func (r *StatPostgres) AddClick(linkID uint) {
+	var stat shortener.Stat
+	currentDate := datatypes.Date(time.Now())
+	r.db.Find(&stat, "link_id = ? AND date_stat = ?", linkID, currentDate)
+	if stat.ID == 0 {
+		r.db.Create(&shortener.Stat{
+			LinkID: linkID,
+			Clicks: 1,
+			Date:   currentDate,
+		})
+	} else {
+		stat.Clicks += 1
+		r.db.Save(&stat)
+	}
 }
 
-func (r *StatPostgres) GetStats(by string, from, to time.Time) []shortener.StatGetResponse {
-	return nil
+func (r *StatPostgres) GetStats(by string, from, to time.Time) ([]shortener.StatGetResponse, error) {
+	// var stats []shortener.StatGetResponse
+	// var selectQuery string
+	// switch by {
+	// case shortener.GroupByDay:
+	// 	selectQuery = "to_char(date_stat, 'YYYY-MM-DD') as period, sum(clicks)"
+	// case shortener.GroupByMonth:
+	// 	selectQuery = "to_char(date_stat, 'YYYY-MM') as period, sum(clicks)"
+	// }
+	// err := r.db.Table("stats").
+	// 	Select(selectQuery).
+	// 	Where("date_stat BETWEEN ? AND ?", from, to).
+	// 	Group("period").
+	// 	Order("period").
+	// 	Scan(&stats)
+	// if err != nil {
+	// 	return nil, err.Error
+	// }
+
+	// return stats, nil
+
+	var stats []shortener.StatGetResponse
+	var selectQuery string
+
+	switch by {
+	case shortener.GroupByDay:
+		selectQuery = "to_char(date_stat, 'YYYY-MM-DD') as period, sum(clicks) as clicks"
+	case shortener.GroupByMonth:
+		selectQuery = "to_char(date_stat, 'YYYY-MM') as period, sum(clicks) as clicks"
+	default:
+		return nil, fmt.Errorf("invalid group by value: %v", by)
+	}
+
+	query := r.db.Table("stats").
+		Select(selectQuery).
+		Where("date_stat BETWEEN ? AND ?", from, to)
+
+	// if url != "" {
+	// 	query = query.Where("url = ?", url)
+	// }
+
+	err := query.
+		Group("period").
+		Order("period").
+		Scan(&stats).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(stats) == 0 {
+		return []shortener.StatGetResponse{}, nil
+	}
+
+	return stats, nil
 }

@@ -6,6 +6,7 @@ import (
 	"shortener/internal/handler"
 	"shortener/internal/repository"
 	"shortener/internal/service"
+	"shortener/pkg/event"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -28,8 +29,10 @@ func main() {
 		logrus.Fatalf("failed to initialization db: %s", err.Error())
 	}
 
+	eventBus := event.NewEventBus()
+
 	repository := repository.NewRepository(db.DB)
-	service := service.NewService(repository, config)
+	service := service.NewService(repository, config, eventBus)
 	handler := handler.NewHandler(service)
 
 	srv := new(shortener.Server)

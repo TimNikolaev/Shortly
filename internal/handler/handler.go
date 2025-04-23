@@ -31,6 +31,10 @@ func (h *Handler) InitRouts() *gin.Engine {
 			link.PUT("/:id", h.updateLink)
 			link.DELETE("/:id", h.deleteLink)
 		}
+		stat := api.Group("/stat")
+		{
+			stat.GET("/", h.GetStat)
+		}
 	}
 	return router
 }

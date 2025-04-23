@@ -2,6 +2,7 @@ package service
 
 import (
 	"shortener"
+	"shortener/pkg/event"
 
 	"gorm.io/gorm"
 )
@@ -18,7 +19,16 @@ func (s *Service) CreateLink(userID int, url string) (*shortener.Link, error) {
 }
 
 func (s *Service) GoToLink(hash string) (*shortener.Link, error) {
-	return s.LinkRepository.GetByHash(hash)
+	link, err := s.LinkRepository.GetByHash(hash)
+	if err != nil {
+		return nil, err
+	}
+	go s.EventBus.Publish(event.Event{
+		Type: event.EventLinkVisited,
+		Data: link.ID,
+	})
+
+	return link, nil
 }
 
 func (s *Service) GetAllLinks(userID, limit, offset int) ([]shortener.Link, int64, error) {
