@@ -19,12 +19,12 @@ type Stat struct {
 	Date   datatypes.Date `json:"date" gorm:"column:date_stat"`
 }
 
-type StatGetResponse struct {
-	Period string `json:"period" gorm:"column:period"`
-	Clicks int    `json:"sum" gorm:"column:clicks"`
+type GetStatResponse struct {
+	Period string `json:"period"`
+	Clicks int    `json:"sum"`
 }
 
 type StatRepository interface {
 	AddClick(linkId uint)
-	GetStats(by string, from, to time.Time) ([]StatGetResponse, error)
+	GetStats(linkID uint, by string, from, to time.Time) ([]GetStatResponse, error)
 }

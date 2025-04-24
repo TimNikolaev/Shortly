@@ -21,20 +21,20 @@ func (h *Handler) InitRouts() *gin.Engine {
 		auth.POST("/sign-up", h.signUp)
 		auth.POST("/sign-in", h.signIn)
 	}
-	api := router.Group("/api", h.userIdentity)
+
+	link := router.Group("/link", h.userIdentity)
 	{
-		link := api.Group("/link")
-		{
-			link.POST("/", h.createLink)
-			link.GET("/:hash", h.goToLink)
-			link.GET("/", h.getAllLinks)
-			link.PUT("/:id", h.updateLink)
-			link.DELETE("/:id", h.deleteLink)
-		}
-		stat := api.Group("/stat")
-		{
-			stat.GET("/", h.GetStat)
-		}
+		link.POST("/", h.createLink)
+		link.GET("/", h.getAllLinks)
+		link.PUT("/:id", h.updateLink)
+		link.DELETE("/:id", h.deleteLink)
 	}
+	router.GET("/:hash", h.goToLink)
+
+	stat := router.Group("/stat", h.userIdentity)
+	{
+		stat.GET("/:id", h.getStat)
+	}
+
 	return router
 }

@@ -33,28 +33,8 @@ func (r *StatPostgres) AddClick(linkID uint) {
 	}
 }
 
-func (r *StatPostgres) GetStats(by string, from, to time.Time) ([]shortener.StatGetResponse, error) {
-	// var stats []shortener.StatGetResponse
-	// var selectQuery string
-	// switch by {
-	// case shortener.GroupByDay:
-	// 	selectQuery = "to_char(date_stat, 'YYYY-MM-DD') as period, sum(clicks)"
-	// case shortener.GroupByMonth:
-	// 	selectQuery = "to_char(date_stat, 'YYYY-MM') as period, sum(clicks)"
-	// }
-	// err := r.db.Table("stats").
-	// 	Select(selectQuery).
-	// 	Where("date_stat BETWEEN ? AND ?", from, to).
-	// 	Group("period").
-	// 	Order("period").
-	// 	Scan(&stats)
-	// if err != nil {
-	// 	return nil, err.Error
-	// }
-
-	// return stats, nil
-
-	var stats []shortener.StatGetResponse
+func (r *StatPostgres) GetStats(linkID uint, by string, from, to time.Time) ([]shortener.GetStatResponse, error) {
+	var stats []shortener.GetStatResponse
 	var selectQuery string
 
 	switch by {
@@ -70,9 +50,10 @@ func (r *StatPostgres) GetStats(by string, from, to time.Time) ([]shortener.Stat
 		Select(selectQuery).
 		Where("date_stat BETWEEN ? AND ?", from, to)
 
-	// if url != "" {
-	// 	query = query.Where("url = ?", url)
-	// }
+	if linkID == 0 {
+		return nil, fmt.Errorf("invalid link_id value %v", linkID)
+	}
+	query = query.Where("link_id = ?", linkID)
 
 	err := query.
 		Group("period").
@@ -81,10 +62,6 @@ func (r *StatPostgres) GetStats(by string, from, to time.Time) ([]shortener.Stat
 
 	if err != nil {
 		return nil, err
-	}
-
-	if len(stats) == 0 {
-		return []shortener.StatGetResponse{}, nil
 	}
 
 	return stats, nil

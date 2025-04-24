@@ -21,6 +21,6 @@ func (s *Service) AddClick() {
 	}
 }
 
-func (s *Service) GetStats(by string, from, to time.Time) ([]shortener.StatGetResponse, error) {
-	return s.StatRepository.GetStats(by, from, to)
+func (s *Service) GetStats(linkID uint, by string, from, to time.Time) ([]shortener.GetStatResponse, error) {
+	return s.StatRepository.GetStats(linkID, by, from, to)
 }

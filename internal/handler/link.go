@@ -2,10 +2,15 @@ package handler
 
 import (
 	"net/http"
+	"shortener"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
+
+type LinkCreateRequest struct {
+	URL string `json:"url" validate:"required,url"`
+}
 
 func (h *Handler) createLink(c *gin.Context) {
 	userID, err := getUserID(c)
@@ -41,6 +46,11 @@ func (h *Handler) goToLink(c *gin.Context) {
 	c.Redirect(http.StatusTemporaryRedirect, link.URL)
 }
 
+type getAllLinksResponse struct {
+	Links []shortener.Link `json:"links"`
+	Count int64            `json:"count"`
+}
+
 func (h *Handler) getAllLinks(c *gin.Context) {
 	userID, err := getUserID(c)
 	if err != nil {
@@ -67,6 +77,11 @@ func (h *Handler) getAllLinks(c *gin.Context) {
 	c.JSON(http.StatusOK, getAllLinksResponse{Links: links, Count: count})
 }
 
+type LinkUpdateRequest struct {
+	URL  string `json:"url" validate:"required,url"`
+	Hash string `json:"hash"`
+}
+
 func (h *Handler) updateLink(c *gin.Context) {
 	userID, err := getUserID(c)
 	if err != nil {
@@ -91,7 +106,7 @@ func (h *Handler) updateLink(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{"link": link})
+	c.JSON(http.StatusOK, link)
 }
 
 func (h *Handler) deleteLink(c *gin.Context) {

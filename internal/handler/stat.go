@@ -3,12 +3,19 @@ package handler
 import (
 	"net/http"
 	"shortener"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) GetStat(c *gin.Context) {
+func (h *Handler) getStat(c *gin.Context) {
+	linkID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
 	from, err := time.Parse("2006-01-02", c.Query("from"))
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -27,11 +34,11 @@ func (h *Handler) GetStat(c *gin.Context) {
 		return
 	}
 
-	stats, err := h.service.GetStats(by, from, to)
+	stats, err := h.service.GetStats(uint(linkID), by, from, to)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{"stats": stats})
+	c.JSON(http.StatusOK, stats)
 }
