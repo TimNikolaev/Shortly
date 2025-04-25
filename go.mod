@@ -1,4 +1,4 @@
-module shortener
+module shortly
 
 go 1.24.1
 

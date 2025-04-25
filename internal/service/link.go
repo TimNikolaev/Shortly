@@ -1,14 +1,14 @@
 package service
 
 import (
-	"shortener"
-	"shortener/pkg/event"
+	"shortly"
+	"shortly/pkg/event"
 
 	"gorm.io/gorm"
 )
 
-func (s *Service) CreateLink(userID int, url string) (*shortener.Link, error) {
-	link := shortener.NewLink(uint(userID), url)
+func (s *Service) CreateLink(userID int, url string) (*shortly.Link, error) {
+	link := shortly.NewLink(uint(userID), url)
 
 	createdLink, err := s.LinkRepository.Create(link)
 	if err != nil {
@@ -18,7 +18,7 @@ func (s *Service) CreateLink(userID int, url string) (*shortener.Link, error) {
 	return createdLink, nil
 }
 
-func (s *Service) GoToLink(hash string) (*shortener.Link, error) {
+func (s *Service) GoToLink(hash string) (*shortly.Link, error) {
 	link, err := s.LinkRepository.GetByHash(hash)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (s *Service) GoToLink(hash string) (*shortener.Link, error) {
 	return link, nil
 }
 
-func (s *Service) GetAllLinks(userID, limit, offset int) ([]shortener.Link, int64, error) {
+func (s *Service) GetAllLinks(userID, limit, offset int) ([]shortly.Link, int64, error) {
 	links, err := s.LinkRepository.GetAll(uint(userID), limit, offset)
 	if err != nil {
 		return nil, 0, err
@@ -45,8 +45,8 @@ func (s *Service) GetAllLinks(userID, limit, offset int) ([]shortener.Link, int6
 	return links, count, nil
 }
 
-func (s *Service) UpdateLink(userID, linkID uint, url, hash string) (*shortener.Link, error) {
-	return s.LinkRepository.Update(&shortener.Link{
+func (s *Service) UpdateLink(userID, linkID uint, url, hash string) (*shortly.Link, error) {
+	return s.LinkRepository.Update(&shortly.Link{
 		Model: gorm.Model{ID: linkID},
 		URL:   url,
 		Hash:  hash,

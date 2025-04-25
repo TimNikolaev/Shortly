@@ -3,13 +3,13 @@ package service
 import (
 	"crypto/sha1"
 	"fmt"
-	"shortener"
-	"shortener/pkg/jwt"
+	"shortly"
+	"shortly/pkg/jwt"
 )
 
 const salt = "qwerty123456789"
 
-func (s *Service) CreateUser(user *shortener.User) (uint, error) {
+func (s *Service) CreateUser(user *shortly.User) (uint, error) {
 	user.Password = generatePasswordHash(user.Password)
 	return s.UserRepository.CreateUser(user)
 }

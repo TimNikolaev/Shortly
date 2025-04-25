@@ -1,8 +1,8 @@
 package service
 
 import (
-	"shortener"
-	"shortener/pkg/event"
+	"shortly"
+	"shortly/pkg/event"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -21,6 +21,6 @@ func (s *Service) AddClick() {
 	}
 }
 
-func (s *Service) GetStats(linkID uint, by string, from, to time.Time) ([]shortener.GetStatResponse, error) {
+func (s *Service) GetStats(linkID uint, by string, from, to time.Time) ([]shortly.GetStatResponse, error) {
 	return s.StatRepository.GetStats(linkID, by, from, to)
 }

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"shortener/internal/service"
+	"shortly/internal/service"
 
 	"github.com/gin-gonic/gin"
 )

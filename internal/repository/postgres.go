@@ -1,20 +1,16 @@
 package repository
 
 import (
-	"shortener/configs"
+	"shortly/configs"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type DB struct {
-	*gorm.DB
-}
-
-func NewPostgresDB(config *configs.Config) (*DB, error) {
+func NewPostgresDB(config *configs.Config) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(config.DSN), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
-	return &DB{DB: db}, nil
+	return db, nil
 }

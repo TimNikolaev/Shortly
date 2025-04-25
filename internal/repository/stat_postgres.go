@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"shortener"
+	"shortly"
 	"time"
 
 	"gorm.io/datatypes"
@@ -18,11 +18,11 @@ func NewStatPostgres(db *gorm.DB) *StatPostgres {
 }
 
 func (r *StatPostgres) AddClick(linkID uint) {
-	var stat shortener.Stat
+	var stat shortly.Stat
 	currentDate := datatypes.Date(time.Now())
 	r.db.Find(&stat, "link_id = ? AND date_stat = ?", linkID, currentDate)
 	if stat.ID == 0 {
-		r.db.Create(&shortener.Stat{
+		r.db.Create(&shortly.Stat{
 			LinkID: linkID,
 			Clicks: 1,
 			Date:   currentDate,
@@ -33,14 +33,14 @@ func (r *StatPostgres) AddClick(linkID uint) {
 	}
 }
 
-func (r *StatPostgres) GetStats(linkID uint, by string, from, to time.Time) ([]shortener.GetStatResponse, error) {
-	var stats []shortener.GetStatResponse
+func (r *StatPostgres) GetStats(linkID uint, by string, from, to time.Time) ([]shortly.GetStatResponse, error) {
+	var stats []shortly.GetStatResponse
 	var selectQuery string
 
 	switch by {
-	case shortener.GroupByDay:
+	case shortly.GroupByDay:
 		selectQuery = "to_char(date_stat, 'YYYY-MM-DD') as period, sum(clicks) as clicks"
-	case shortener.GroupByMonth:
+	case shortly.GroupByMonth:
 		selectQuery = "to_char(date_stat, 'YYYY-MM') as period, sum(clicks) as clicks"
 	default:
 		return nil, fmt.Errorf("invalid group by value: %v", by)

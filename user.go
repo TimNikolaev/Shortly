@@ -1,4 +1,4 @@
-package shortener
+package shortly
 
 import "gorm.io/gorm"
 

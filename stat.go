@@ -1,4 +1,4 @@
-package shortener
+package shortly
 
 import (
 	"time"
@@ -12,6 +12,11 @@ const (
 	GroupByMonth = "month"
 )
 
+type StatRepository interface {
+	AddClick(linkId uint)
+	GetStats(linkID uint, by string, from, to time.Time) ([]GetStatResponse, error)
+}
+
 type Stat struct {
 	gorm.Model
 	LinkID uint           `json:"link_id" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
@@ -22,9 +27,4 @@ type Stat struct {
 type GetStatResponse struct {
 	Period string `json:"period"`
 	Clicks int    `json:"sum"`
-}
-
-type StatRepository interface {
-	AddClick(linkId uint)
-	GetStats(linkID uint, by string, from, to time.Time) ([]GetStatResponse, error)
 }

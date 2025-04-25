@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"shortener"
+	"shortly"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -16,7 +16,7 @@ func NewLinkPostgres(db *gorm.DB) *LinkPostgres {
 	return &LinkPostgres{db: db}
 }
 
-func (r *LinkPostgres) Create(link *shortener.Link) (*shortener.Link, error) {
+func (r *LinkPostgres) Create(link *shortly.Link) (*shortly.Link, error) {
 	result := r.db.Create(link)
 	if result.Error != nil {
 		return nil, result.Error
@@ -25,8 +25,8 @@ func (r *LinkPostgres) Create(link *shortener.Link) (*shortener.Link, error) {
 	return link, nil
 }
 
-func (r *LinkPostgres) GetByHash(hash string) (*shortener.Link, error) {
-	var link shortener.Link
+func (r *LinkPostgres) GetByHash(hash string) (*shortly.Link, error) {
+	var link shortly.Link
 
 	result := r.db.Where("hash = ?", hash).First(&link)
 	if result.Error != nil {
@@ -36,8 +36,8 @@ func (r *LinkPostgres) GetByHash(hash string) (*shortener.Link, error) {
 	return &link, nil
 }
 
-func (r *LinkPostgres) GetByID(id uint) (*shortener.Link, error) {
-	var link shortener.Link
+func (r *LinkPostgres) GetByID(id uint) (*shortly.Link, error) {
+	var link shortly.Link
 
 	result := r.db.First(&link, id)
 	if result.Error != nil {
@@ -47,8 +47,8 @@ func (r *LinkPostgres) GetByID(id uint) (*shortener.Link, error) {
 	return &link, nil
 }
 
-func (r *LinkPostgres) GetAll(userID uint, limit, offset int) ([]shortener.Link, error) {
-	var links []shortener.Link
+func (r *LinkPostgres) GetAll(userID uint, limit, offset int) ([]shortly.Link, error) {
+	var links []shortly.Link
 
 	result := r.db.Table("links").
 		Where("deleted_at is null AND user_id = ?", userID).
@@ -77,8 +77,8 @@ func (r *LinkPostgres) Count(userID uint) (int64, error) {
 	return count, nil
 }
 
-func (r *LinkPostgres) Update(link *shortener.Link, userID uint) (*shortener.Link, error) {
-	result := r.db.Model(&shortener.Link{}).Where("id = ? AND user_id = ?", link.ID, userID).Clauses(clause.Returning{}).Updates(link)
+func (r *LinkPostgres) Update(link *shortly.Link, userID uint) (*shortly.Link, error) {
+	result := r.db.Model(&shortly.Link{}).Where("id = ? AND user_id = ?", link.ID, userID).Clauses(clause.Returning{}).Updates(link)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -91,7 +91,7 @@ func (r *LinkPostgres) Update(link *shortener.Link, userID uint) (*shortener.Lin
 }
 
 func (r *LinkPostgres) Delete(userID, linkID uint) error {
-	result := r.db.Where("id = ? AND user_id = ?", linkID, userID).Delete(&shortener.Link{})
+	result := r.db.Where("id = ? AND user_id = ?", linkID, userID).Delete(&shortly.Link{})
 	if result.Error != nil {
 		return result.Error
 	}

@@ -2,7 +2,7 @@ package handler
 
 import (
 	"net/http"
-	"shortener"
+	"shortly"
 	"strconv"
 	"time"
 
@@ -29,7 +29,7 @@ func (h *Handler) getStat(c *gin.Context) {
 	}
 
 	by := c.Query("by")
-	if by != shortener.GroupByDay && by != shortener.GroupByMonth {
+	if by != shortly.GroupByDay && by != shortly.GroupByMonth {
 		newErrorResponse(c, http.StatusBadRequest, "invalid by param")
 		return
 	}

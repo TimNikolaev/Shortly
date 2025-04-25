@@ -1,16 +1,16 @@
 package service
 
 import (
-	"shortener"
-	"shortener/configs"
-	"shortener/internal/repository"
-	"shortener/pkg/event"
+	"shortly"
+	"shortly/configs"
+	"shortly/internal/repository"
+	"shortly/pkg/event"
 )
 
 type Service struct {
-	shortener.UserRepository
-	shortener.LinkRepository
-	shortener.StatRepository
+	shortly.UserRepository
+	shortly.LinkRepository
+	shortly.StatRepository
 	Config   *configs.Config
 	EventBus *event.EventBus
 }

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"errors"
-	"shortener"
+	"shortly"
 
 	"gorm.io/gorm"
 )
@@ -15,17 +15,17 @@ func NewUserPostgres(db *gorm.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-func (r *UserPostgres) CreateUser(user *shortener.User) (uint, error) {
+func (r *UserPostgres) CreateUser(user *shortly.User) (uint, error) {
 	result := r.db.Create(user)
 	if result.Error != nil {
 		return 0, result.Error
 	}
-	return user.ID, nil
 
+	return user.ID, nil
 }
 
-func (r *UserPostgres) GetUser(email, password_hash string) (*shortener.User, error) {
-	var user shortener.User
+func (r *UserPostgres) GetUser(email, password_hash string) (*shortly.User, error) {
+	var user shortly.User
 
 	result := r.db.First(&user, "email = ?", email)
 	if result.Error != nil {

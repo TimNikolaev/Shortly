@@ -1,15 +1,15 @@
 package repository
 
 import (
-	"shortener"
+	"shortly"
 
 	"gorm.io/gorm"
 )
 
 type Repository struct {
-	shortener.LinkRepository
-	shortener.UserRepository
-	shortener.StatRepository
+	shortly.LinkRepository
+	shortly.UserRepository
+	shortly.StatRepository
 }
 
 func NewRepository(db *gorm.DB) *Repository {

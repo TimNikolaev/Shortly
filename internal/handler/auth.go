@@ -2,13 +2,13 @@ package handler
 
 import (
 	"net/http"
-	"shortener"
+	"shortly"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) signUp(c *gin.Context) {
-	var input shortener.User
+	var input shortly.User
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -22,7 +22,6 @@ func (h *Handler) signUp(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]any{"id": id})
-
 }
 
 type signInRequest struct {
@@ -45,5 +44,4 @@ func (h *Handler) signIn(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]any{"token": token})
-
 }

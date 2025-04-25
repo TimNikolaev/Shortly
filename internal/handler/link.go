@@ -2,7 +2,7 @@ package handler
 
 import (
 	"net/http"
-	"shortener"
+	"shortly"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -31,7 +31,7 @@ func (h *Handler) createLink(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{"hash": link.Hash})
+	c.JSON(http.StatusOK, link)
 }
 
 func (h *Handler) goToLink(c *gin.Context) {
@@ -47,8 +47,8 @@ func (h *Handler) goToLink(c *gin.Context) {
 }
 
 type getAllLinksResponse struct {
-	Links []shortener.Link `json:"links"`
-	Count int64            `json:"count"`
+	Links []shortly.Link `json:"links"`
+	Count int64          `json:"count"`
 }
 
 func (h *Handler) getAllLinks(c *gin.Context) {
