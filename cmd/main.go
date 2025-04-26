@@ -59,7 +59,9 @@ func main() {
 
 	sqlDB, err := db.DB()
 	if err != nil {
+		logrus.Errorf("failed to get underlying sql.DB: %s", err.Error())
+	}
+	if err := sqlDB.Close(); err != nil {
 		logrus.Errorf("error occurred on db connection close: %s", err.Error())
 	}
-	sqlDB.Close()
 }
