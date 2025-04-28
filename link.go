@@ -37,9 +37,9 @@ func (link *Link) GenerateHash() {
 	link.Hash = generateRandomKey(6)
 }
 
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
 func generateRandomKey(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
 	key := make([]byte, length)
 	for i := range key {
 		key[i] = charset[rand.Intn(len(charset))]
