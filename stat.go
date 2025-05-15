@@ -13,7 +13,7 @@ const (
 )
 
 type StatRepository interface {
-	AddClick(linkId uint)
+	AddClick(linkID uint)
 	GetStats(linkID uint, by string, from, to time.Time) ([]GetStatResponse, error)
 }
 

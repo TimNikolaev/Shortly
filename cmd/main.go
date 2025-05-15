@@ -5,9 +5,10 @@ import (
 	"os"
 	"os/signal"
 	"shortly"
-	"shortly/configs"
+	"shortly/internal/configs"
 	"shortly/internal/handler"
 	"shortly/internal/repository"
+	"shortly/internal/repository/postgres"
 	"shortly/internal/service"
 	"shortly/pkg/event"
 	"syscall"
@@ -28,7 +29,7 @@ func main() {
 		logrus.Fatalf("error loading env variables: %s", err.Error())
 	}
 
-	db, err := repository.NewPostgresDB(config)
+	db, err := postgres.NewPostgresDB(config)
 	if err != nil {
 		logrus.Fatalf("failed to initialization db: %s", err.Error())
 	}

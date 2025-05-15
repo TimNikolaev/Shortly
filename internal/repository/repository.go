@@ -2,6 +2,7 @@ package repository
 
 import (
 	"shortly"
+	"shortly/internal/repository/postgres"
 
 	"gorm.io/gorm"
 )
@@ -14,8 +15,8 @@ type Repository struct {
 
 func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
-		LinkRepository: NewLinkPostgres(db),
-		UserRepository: NewUserPostgres(db),
-		StatRepository: NewStatPostgres(db),
+		LinkRepository: postgres.NewLinkPostgres(db),
+		UserRepository: postgres.NewUserPostgres(db),
+		StatRepository: postgres.NewStatPostgres(db),
 	}
 }

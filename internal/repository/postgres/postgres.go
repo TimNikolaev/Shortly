@@ -1,7 +1,7 @@
-package repository
+package postgres
 
 import (
-	"shortly/configs"
+	"shortly/internal/configs"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

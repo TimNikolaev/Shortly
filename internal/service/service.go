@@ -2,7 +2,7 @@ package service
 
 import (
 	"shortly"
-	"shortly/configs"
+	"shortly/internal/configs"
 	"shortly/internal/repository"
 	"shortly/pkg/event"
 )
