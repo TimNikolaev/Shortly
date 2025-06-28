@@ -20,11 +20,11 @@ func (s *Service) GenerateToken(email, password string) (string, error) {
 		return "", err
 	}
 
-	return jwt.NewJWT(s.Config.AuthConfig.Secret).Generate(user.ID)
+	return jwt.NewJWT(s.config.AuthConfig.Secret).Generate(user.ID)
 }
 
 func (s *Service) ParseToken(accessToken string) (int, error) {
-	return jwt.NewJWT(s.Config.AuthConfig.Secret).Parse(accessToken)
+	return jwt.NewJWT(s.config.AuthConfig.Secret).Parse(accessToken)
 }
 
 func generatePasswordHash(password string) string {

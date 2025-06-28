@@ -11,7 +11,7 @@ type Service struct {
 	shortly.UserRepository
 	shortly.LinkRepository
 	shortly.StatRepository
-	Config   *configs.Config
+	config   *configs.Config
 	EventBus *event.EventBus
 }
 
@@ -20,7 +20,7 @@ func NewService(r *repository.Repository, cfg *configs.Config, eBus *event.Event
 		LinkRepository: r.LinkRepository,
 		UserRepository: r.UserRepository,
 		StatRepository: r.StatRepository,
-		Config:         cfg,
+		config:         cfg,
 		EventBus:       eBus,
 	}
 	go s.AddClick()
